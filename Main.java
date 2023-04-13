@@ -3,8 +3,21 @@ import java.util.Scanner;
 public class Main {
 
   public static void main(String[] args) {
-    test2();
+    Scanner sc = new Scanner(System.in);
+    String s = sc.nextLine(); sc.close();
+    String str[] = s.split(" ");
+    int n = str.length;
+    Tree aTree[] = new Tree[n];
+    for (int i = 0; i < n; i++) 
+      aTree[i] = new Tree(str[i]);
+    Tree.createTree(aTree);
 
+    System.out.print("\nInfix : ");
+    Tree.toStringInfix();
+    System.out.print("\nPrefix : ");
+    Tree.toStringPrefix();
+    System.out.print("\nPostfix : ");
+    Tree.toStringPostfix();
   }
 
   static void test1() {
@@ -20,8 +33,14 @@ public class Main {
     PolishNotation q1 = new PolishNotation("1 * 2 - 4 + 34 - 6 * 4");
     PolishNotation q2 = new PolishNotation("12 + 3 - 6 * 11 * 3 - 18 / 3 + 14");
     PolishNotation q3 = new PolishNotation("6 * 11 * 3 - 18");
+    System.out.println("q1");
     q1.printAll();
+    System.out.println("q2");
+    q2.printAll();
+    System.out.println("q3");
+    q3.printAll();
   }
+
 }
 
 class PolishNotation {
@@ -41,22 +60,36 @@ class PolishNotation {
     }
 
     Tree.createTree(aTree);
+
   }
 
-  public String infix() {
-    return "[" + Tree.toStringInfix() + "]";
+  public void infix() {
+    Tree.toStringInfix();
+    System.out.println();
+    /* return "[" + Tree.toStringInfix() + "]"; */
   }
 
-  public String prefix() {
-    return "[" + Tree.toStringPrefix() + "]";
+  public void prefix() {
+    Tree.toStringPrefix();
+    System.out.println();
+    /* return "[" + Tree.toStringPrefix() + "]"; */
   }
 
-  public String postfix() {
-    return "[" + Tree.toStringPostfix() + "]";
+  public void postfix() {
+    Tree.toStringPostfix();
+    System.out.println();
+    /* return "[" + Tree.toStringPostfix() + "]"; */
   }
 
-  public String printAll() {
-    return this.infix() + "\n" +  this.prefix() + "\n" +  this.postfix() + "\n";
+  public void printAll() {
+    System.out.print("Infix : ");
+    this.infix();
+    System.out.print("Prefix : ");
+    this.prefix();
+    System.out.print("Postfix : ");
+    this.postfix();
+
+    /* return this.infix() + "\n" +  this.prefix() + "\n" +  this.postfix() + "\n"; */
   }
 
   public void ptest() {
@@ -64,10 +97,10 @@ class PolishNotation {
       aTree[i].ptest();
     }
   }
+
 }
 
 class Tree {
-
   private static Tree Root;
   private Tree topLeft;
   private Tree topRight;
@@ -81,7 +114,6 @@ class Tree {
 
   public static void createTree(Tree t[]) {
     int n = t.length;
-
     Tree preT = t[1];
     preT.botLeft = t[0];
     t[0].topRight = preT;
@@ -89,12 +121,14 @@ class Tree {
     for (int i = 2; i < n; i++) {
       Tree curT = t[i];
       String tmp = curT.value;
-      if (tmp.equals("+") || tmp.equals("-")) {
+      if (tmp.equals("+") ||
+       tmp.equals("-")) {
         preT = toTop(preT);
         preT.topRight = curT;
         curT.botLeft = preT;
         preT = curT;
-      } else if (tmp.equals("*") || tmp.equals("/")) {
+      } else if (tmp.equals("*") ||
+       tmp.equals("/")) {
         preT.botRight.topRight = curT;
         preT.botRight.topLeft = null;
         curT.botLeft = preT.botRight;
@@ -106,77 +140,78 @@ class Tree {
         curT.topLeft = preT;
       }
     }
-
     Root = toTop(preT);
   }
-  
+
   private static Tree toTop(Tree t) {
-      while (!(t.topLeft == null && t.topRight == null)) {
-          if (t.topLeft != null) t = t.topLeft;
-          if (t.topRight != null) t = t.topRight;
-        }
-        return t;
+    while (!(t.topLeft == null &&
+     t.topRight == null)) {
+      if (t.topLeft != null) 
+      t = t.topLeft;
+      if (t.topRight != null) 
+      t = t.topRight;
     }
-
-  public static String toStringInfix() {
-    return infix(Root);
+    return t;
   }
 
-  public static String toStringPrefix() {
-    return prefix(Root);
+  public static void toStringInfix() {
+    infix(Root);
+    /* return infix(Root); */
   }
 
-  public static String toStringPostfix() {
-    return postfix(Root);
+  public static void toStringPrefix() {
+    prefix(Root);
+    /* return prefix(Root); */
   }
 
-  public static String infix(Tree t) {
-    String s = "";
-    if (t.botLeft == null && t.botRight == null) {
-      s += t;
+  public static void toStringPostfix() {
+    postfix(Root);
+    /* return postfix(Root); */
+  }
+
+  public static void infix(Tree t) {
+    if (t.botLeft == null &&
+     t.botRight == null) {
+      System.out.print(t);
     } else {
-      s += infix(t.botLeft);
-      s += t;
-      s += infix(t.botRight);
+      infix(t.botLeft);
+      System.out.print(t);
+      infix(t.botRight);
     }
-    return s;
   }
 
-  public static String prefix(Tree t) {
-    String s = "";
-    if (t.botLeft == null && t.botRight == null) {
-      s += t;
+  public static void prefix(Tree t) {
+    if (t.botLeft == null &&
+     t.botRight == null) {
+      System.out.print(t);
     } else {
-      s += t;
-      s += prefix(t.botLeft);
-      s += prefix(t.botRight);
+      System.out.print(t);
+      prefix(t.botLeft);
+      prefix(t.botRight);
     }
-    return s;
   }
 
-  public static String postfix(Tree t) {
-    String s = "";
-    if (t.botLeft == null && t.botRight == null) {
-      s += t;
+  public static void postfix(Tree t) {
+    if (t.botLeft == null &&
+     t.botRight == null) {
+      System.out.print(t);
     } else {
-      s += postfix(t.botLeft);
-      s += postfix(t.botRight);
-      s += t;
+      postfix(t.botLeft);
+      postfix(t.botRight);
+      System.out.print(t);
     }
-    return s;
   }
 
   public String toString() {
-      return value + " ";
+    return value + " ";
   }
-    
-  public void ptest() {
-      System.out.println("topl = " + topLeft);
-      System.out.println("topr = " + topRight);
-      System.out.println("botl = " + botLeft);
-      System.out.println("botr = " + botRight);
-      System.out.println("this = " + value);
-      System.out.println("----------------");
-    }
 
+  public void ptest() {
+    System.out.println("topl = " + topLeft);
+    System.out.println("topr = " + topRight);
+    System.out.println("botl = " + botLeft);
+    System.out.println("botr = " + botRight);
+    System.out.println("this = " + value);
+    System.out.println("----------------");
+  }
 }
